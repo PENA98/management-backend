@@ -1,0 +1,33 @@
+version: 3.7.0
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_USER}
+    ports:
+      - ${DATABASE_PORT}:5432
+    expose:
+      - ${DATABASE_PORT}
+    command: -p ${DATABASE_PORT}
+
+  management_backend:
+    build: .
+    environment:
+      ENV: ${ENV}
+    volumes:
+      - .:/management_backend
+    ports:
+      - ${MANAGEMENT_BACKEND_PORT}:3000
+    expose:
+      - ${MANAGEMENT_BACKEND_PORT}
+    depends_on:
+      - db
+    tty: true
+
+volumes:
+  db_data:
